@@ -1,4 +1,4 @@
-package com.example.rbpo_aeroport.entities;
+package com.example.rbpo_aeroport.models;
 
 import lombok.Getter;
 import lombok.Builder;
@@ -7,7 +7,7 @@ import lombok.ToString;
 @Getter
 @Builder
 @ToString
-public class Passenger {
+public class Customer {
     private final Long id;
     private final String name;
     private final Long passport;
