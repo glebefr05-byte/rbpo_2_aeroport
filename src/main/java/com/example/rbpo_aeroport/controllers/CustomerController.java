@@ -1,51 +1,65 @@
 package com.example.rbpo_aeroport.controllers;
 
-import com.example.rbpo_aeroport.models.Customer;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicLong;
+import com.example.rbpo_aeroport.entities.CustomerEntity;
+import com.example.rbpo_aeroport.services.CustomerService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 @RestController
-@RequestMapping("/customers")
+@RequestMapping("/api/customers")
 public class CustomerController {
-    private final List<Customer> customers = new ArrayList<>();
-    private final AtomicLong idCounter = new AtomicLong(1);
+
+    @Autowired
+    private CustomerService customerService;
+
+    @GetMapping
+    public List<CustomerEntity> getAllCustomers() {
+        return customerService.findAll();
+    }
 
     @GetMapping("/{id}")
-    public Customer getCustomerById(@PathVariable Long id) {
-        return customers.stream()
-                .filter(Customer -> Customer.getId().equals(id))
-                .findFirst()
-                .orElse(null);
+    public ResponseEntity<CustomerEntity> getCustomerById(@PathVariable UUID id) {
+        Optional<CustomerEntity> customer = customerService.findById(id);
+        return customer.map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Customer createCustomer(@RequestBody Customer Customer) {
-        Customer newCustomer = Customer.builder()
-                .id(idCounter.getAndIncrement())
-                .name(Customer.getName())
-                .passport(Customer.getPassport())
-                .build();
-        customers.add(newCustomer);
-        return newCustomer;
-    }
-
-    @DeleteMapping("/{id}")
-    public boolean deleteCustomer(@PathVariable Long id) {
-        customers.removeIf(Customer -> Customer.getId().equals(id));
-        return true;
+    public CustomerEntity createCustomer(@RequestBody CustomerEntity customer) {
+        return customerService.save(customer);
     }
 
     @PutMapping("/{id}")
-    public Customer updateCustomer(@PathVariable Long id, @RequestBody Customer Customer) {
-        deleteCustomer(id);
-        Customer updatedCustomer = Customer.builder()
-                .id(id)
-                .name(Customer.getName())
-                .passport(Customer.getPassport())
-                .build();
-        customers.add(updatedCustomer);
-        return updatedCustomer;
+    public ResponseEntity<CustomerEntity> updateCustomer(@PathVariable UUID id, @RequestBody CustomerEntity customerDetails) {
+        try {
+            CustomerEntity updatedCustomer = customerService.update(id, customerDetails);
+            return ResponseEntity.ok(updatedCustomer);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<CustomerEntity> partialUpdateCustomer(@PathVariable UUID id, @RequestBody CustomerEntity customerDetails) {
+        try {
+            CustomerEntity updatedCustomer = customerService.partialUpdate(id, customerDetails);
+            return ResponseEntity.ok(updatedCustomer);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCustomer(@PathVariable UUID id) {
+        if (customerService.findById(id).isPresent()) {
+            customerService.deleteById(id);
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 }
