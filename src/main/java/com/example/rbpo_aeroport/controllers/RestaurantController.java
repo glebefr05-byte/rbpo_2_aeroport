@@ -4,6 +4,7 @@ import com.example.rbpo_aeroport.entities.RestaurantEntity;
 import com.example.rbpo_aeroport.services.RestaurantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,11 +19,13 @@ public class RestaurantController {
     private RestaurantService restaurantService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('read')")
     public List<RestaurantEntity> getAllRestaurants() {
         return restaurantService.findAll();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('read')")
     public ResponseEntity<RestaurantEntity> getRestaurantById(@PathVariable UUID id) {
         Optional<RestaurantEntity> restaurant = restaurantService.findById(id);
         return restaurant.map(ResponseEntity::ok)
@@ -30,11 +33,13 @@ public class RestaurantController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public RestaurantEntity createRestaurant(@RequestBody RestaurantEntity restaurant) {
         return restaurantService.save(restaurant);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('modify')")
     public ResponseEntity<RestaurantEntity> updateRestaurant(@PathVariable UUID id, @RequestBody RestaurantEntity restaurantDetails) {
         try {
             RestaurantEntity updatedRestaurant = restaurantService.update(id, restaurantDetails);
@@ -45,6 +50,7 @@ public class RestaurantController {
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasAuthority('modify')")
     public ResponseEntity<RestaurantEntity> partialUpdateRestaurant(@PathVariable UUID id, @RequestBody RestaurantEntity restaurantDetails) {
         try {
             RestaurantEntity updatedRestaurant = restaurantService.partialUpdate(id, restaurantDetails);
@@ -55,6 +61,7 @@ public class RestaurantController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteRestaurant(@PathVariable UUID id) {
         if (restaurantService.findById(id).isPresent()) {
             restaurantService.deleteById(id);

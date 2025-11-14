@@ -5,6 +5,7 @@ import com.example.rbpo_aeroport.services.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -21,11 +22,13 @@ public class ReservationController {
     private ReservationService reservationService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('read')")
     public List<ReservationEntity> getAllReservations() {
         return reservationService.findAll();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('read')")
     public ResponseEntity<ReservationEntity> getReservationById(@PathVariable UUID id) {
         Optional<ReservationEntity> reservation = reservationService.findById(id);
         return reservation.map(ResponseEntity::ok)
@@ -33,21 +36,25 @@ public class ReservationController {
     }
 
     @GetMapping("/customer/{customerId}")
+    @PreAuthorize("hasAuthority('read')")
     public List<ReservationEntity> getReservationsByCustomer(@PathVariable UUID customerId) {
         return reservationService.findByCustomerId(customerId);
     }
 
     @GetMapping("/table/{tableId}")
+    @PreAuthorize("hasAuthority('read')")
     public List<ReservationEntity> getReservationsByTable(@PathVariable UUID tableId) {
         return reservationService.findByTableId(tableId);
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ReservationEntity createReservation(@RequestBody ReservationEntity reservation) {
         return reservationService.save(reservation);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('modify')")
     public ResponseEntity<ReservationEntity> updateReservation(@PathVariable UUID id, @RequestBody ReservationEntity reservationDetails) {
         try {
             ReservationEntity updatedReservation = reservationService.update(id, reservationDetails);
@@ -57,6 +64,7 @@ public class ReservationController {
         }
     }
 
+    @PreAuthorize("hasAuthority('modify')")
     @PatchMapping("/{id}")
     public ResponseEntity<ReservationEntity> partialUpdateReservation(@PathVariable UUID id, @RequestBody ReservationEntity reservationDetails) {
         try {
@@ -68,6 +76,7 @@ public class ReservationController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteReservation(@PathVariable UUID id) {
         if (reservationService.findById(id).isPresent()) {
             reservationService.deleteById(id);
@@ -77,6 +86,7 @@ public class ReservationController {
     }
 
     @PostMapping("/tablecheck")
+    @PreAuthorize("hasAuthority('modify')")
     public ResponseEntity<Map<String, Object>> checkTableAvailability(
             @RequestBody TableCheckRequest request) {
         try {
@@ -99,6 +109,7 @@ public class ReservationController {
     }
 
     @PostMapping("/reservetable")
+    @PreAuthorize("hasAuthority('modify')")
     public ResponseEntity<?> reserveTable(@RequestBody ReserveTableRequest request) {
         try {
             ReservationEntity reservation = reservationService.reserveTable(
@@ -117,6 +128,7 @@ public class ReservationController {
     }
 
     @PostMapping("/{reservationId}/preorder")
+    @PreAuthorize("hasAuthority('modify')")
     public ResponseEntity<?> addPreOrder(
             @PathVariable UUID reservationId,
             @RequestBody PreOrderRequest request) {

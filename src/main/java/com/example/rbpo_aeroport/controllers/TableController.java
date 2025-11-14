@@ -4,6 +4,7 @@ import com.example.rbpo_aeroport.entities.TableEntity;
 import com.example.rbpo_aeroport.services.TableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,11 +20,13 @@ public class TableController {
     private TableService tableService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('read')")
     public List<TableEntity> getAllTables() {
         return tableService.findAll();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('read')")
     public ResponseEntity<TableEntity> getTableById(@PathVariable UUID id) {
         Optional<TableEntity> table = tableService.findById(id);
         return table.map(ResponseEntity::ok)
@@ -31,16 +34,19 @@ public class TableController {
     }
 
     @GetMapping("/restaurant/{restaurantId}")
+    @PreAuthorize("hasAuthority('read')")
     public List<TableEntity> getTablesByRestaurant(@PathVariable UUID restaurantId) {
         return tableService.findByRestaurantId(restaurantId);
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public TableEntity createTable(@RequestBody TableEntity table) {
         return tableService.save(table);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('modify')")
     public ResponseEntity<TableEntity> updateTable(@PathVariable UUID id, @RequestBody TableEntity tableDetails) {
         try {
             TableEntity updatedTable = tableService.update(id, tableDetails);
@@ -51,6 +57,7 @@ public class TableController {
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasAuthority('modify')")
     public ResponseEntity<TableEntity> partialUpdateTable(@PathVariable UUID id, @RequestBody TableEntity tableDetails) {
         try {
             TableEntity updatedTable = tableService.partialUpdate(id, tableDetails);
@@ -61,6 +68,7 @@ public class TableController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteTable(@PathVariable UUID id) {
         if (tableService.findById(id).isPresent()) {
             tableService.deleteById(id);
