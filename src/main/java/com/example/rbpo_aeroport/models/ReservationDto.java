@@ -1,14 +1,12 @@
 package com.example.rbpo_aeroport.models;
 
-import lombok.Getter;
-import lombok.Builder;
-import lombok.ToString;
+import lombok.Data;
 
-@Getter
-@Builder
-@ToString
-public class Reservation {
-    private final Long id;
+import java.util.UUID;
+
+@Data
+public class ReservationDto {
+    private final UUID id;
     private final Long customerId;
     private final Long tableId;
     private final Long startTime;

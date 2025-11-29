@@ -1,15 +1,12 @@
 package com.example.rbpo_aeroport.models;
 
-import lombok.Getter;
-import lombok.Builder;
-import lombok.ToString;
+import lombok.Data;
 import java.util.Map;
+import java.util.UUID;
 
-@Getter
-@Builder
-@ToString
-public class MenuItem {
-    private final Long id;
+@Data
+public class MenuItemDto {
+    private final UUID id;
     private final String name;
     private final Map<String, Double> positions;
 }
