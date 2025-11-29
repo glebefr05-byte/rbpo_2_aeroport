@@ -25,7 +25,7 @@ public interface UserSessionRepository extends JpaRepository<UserSession, UUID> 
     void updateSessionStatus(@Param("id") UUID id, @Param("status") SessionStatus status, @Param("revokedAt") Instant revokedAt);
 
     @Modifying
-    @Query("UPDATE UserSession us SET us.status = 'EXPIRED' WHERE (us.accessTokenExpiry < :now OR us.refreshTokenExpiry) < :now AND us.status = 'ACTIVE'")
+    @Query("UPDATE UserSession us SET us.status = 'REVOKED' WHERE us.accessTokenExpiry < :now AND us.status = 'ACTIVE'")
     void expireOldSessions(@Param("now") Instant now);
 
     boolean existsByRefreshToken(String refreshToken);
