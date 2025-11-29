@@ -111,7 +111,8 @@ public class AuthenticationController {
             }
 
             UserSession oldSession = sessionOpt.get();
-            if (!oldSession.getId().equals(userId)) {
+            if (!oldSession.getStatus().equals(SessionStatus.USED)) {
+                oldSession.setStatus(SessionStatus.REVOKED);
                 return ResponseEntity.status(HttpStatus.FORBIDDEN)
                         .body(Map.of("error", "Доступ запрещен"));
             }
@@ -125,7 +126,7 @@ public class AuthenticationController {
             ApplicationUser user = userOpt.get();
 
 
-            oldSession.setStatus(SessionStatus.REVOKED);
+            oldSession.setStatus(SessionStatus.USED);
             oldSession.setRevokedAt(Instant.now());
             userSessionRepository.save(oldSession);
 
