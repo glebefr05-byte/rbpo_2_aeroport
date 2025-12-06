@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/db_restaurant
-    username: postgres
-    password: 123
+    url: ${URL_DB}
+    username: ${USER_DB}
+    password: ${PASS_DB}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -23,15 +23,15 @@ server:
   port: 8080
 
 jwt:
-  accessSecret: access-token-secret-access-token-secret
-  refreshSecret: refresh-token-secret-refresh-token-secret
-  accessExpiration: 3600000
-  refreshExpiration: 259200000
+  accessSecret: ${ACCESS_SECRET}
+  refreshSecret: ${REFRESH_SECRET}
+  accessExpiration: ${ACCESS_EXPIRATION}
+  refreshExpiration: ${ACCESS_EXPIRATION}
 
 logging:
   level:
     org:
       springframework:
         security: DEBUG
-    com.rbpo_aeroport: DEBUG
+    com.example.rbpo_aeroport: DEBUG
     org.hibernate.SQL: DEBUG
