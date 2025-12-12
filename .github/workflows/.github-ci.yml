@@ -53,6 +53,9 @@ jobs:
       - name: Grant permissions to mvnw script
         run: chmod u+x ./mvnw
 
+      - name: Run mvnw compile script
+        run: ./mvnw compile
+        
       - name: Run mvnw test script
         run: ./mvnw test
 
@@ -64,4 +67,4 @@ jobs:
         with:
                  name: rbpo_2_aeroport
                  path: ./target/*.jar
-                 retention_days: 14
+                 retention-days: 14
