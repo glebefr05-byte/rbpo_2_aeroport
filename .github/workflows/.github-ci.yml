@@ -1,4 +1,7 @@
 on:
+   push:
+      branches:
+         - rbpo_6
    pull_request:
       types:  [opened, synchronize, reopened]
       branches:
