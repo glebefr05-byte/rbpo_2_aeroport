@@ -10,7 +10,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: maven:3.9-eclipse-temurin-21
+    container: eclipse-temurin:21-jdk
     services:
        postgres:
           env:
@@ -49,15 +49,15 @@ jobs:
         run: |
              apt-get update && apt-get install -y postgresql-client
              sleep 15
-
-      - name: Run mvnw compile script
-        run: mvn compile
+      
+      - name: Grant permissions to mvnw script
+        run: chmod u+x ./mvnw
 
       - name: Run mvnw test script
-        run: mvn test
+        run: ./mvnw test
 
       - name: Run mvnw package script
-        run: mvn clean package
+        run: ./mvnw package
                 
       - name: Save artifacts
         uses: actions/upload-artifact@v4
