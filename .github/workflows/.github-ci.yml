@@ -13,7 +13,7 @@ jobs:
           env:
              POSTGRES_DB: ${{secrets.NAME_DB }}
              POSTGRES_USER: ${{secrets.USER_DB }}
-             POSTGRES_PASSWORD: ${{secrets.PASS_DB }}\
+             POSTGRES_PASSWORD: ${{secrets.PASS_DB }}
           image: postgres:18
           options: >-
             --health-cmd pg_isready
@@ -40,7 +40,7 @@ jobs:
                 echo "KEY_STORE_TYPE=${{secrets.KEY_STORE_TYPE }}" >> .env
                 echo "KEY_STORE_PASSWORD=${{secrets.KEY_STORE_PASSWORD }}" >> .env
                 echo "KEY_STORE_ALIAS=${{secrets.KEY_STORE_ALIAS }}" >> .env
-                echo "${{secrets.KEY_STORE_SERVER }} | base64 --decode> src/main/resources/${{secrets.KEY_STORE_ALIAS }}.jks
+                echo "${{secrets.KEY_STORE_SERVER }}" | base64 --decode > src/main/resources/${{secrets.KEY_STORE_ALIAS }}.jks
 
       - name: Install PostgreSQL
         run: |
