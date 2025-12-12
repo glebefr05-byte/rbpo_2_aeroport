@@ -51,13 +51,13 @@ jobs:
              sleep 15
 
       - name: Run mvnw compile script
-        run: mvnw compile
+        run: mvn compile
 
       - name: Run mvnw test script
-        run: mvnw test
+        run: mvn test
 
       - name: Run mvnw package script
-        run: mvnw package
+        run: mvn clean package
                 
       - name: Save artifacts
         uses: actions/upload-artifact@v4
